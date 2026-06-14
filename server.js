@@ -18,15 +18,26 @@ const allowedOrigins = [
   'http://localhost:5174'
 ];
 
+const getCorsOrigins = () => {
+  const origins = [...allowedOrigins];
+  if (process.env.FRONTEND_URL) {
+    const envOrigins = process.env.FRONTEND_URL.split(',').map(item => item.trim());
+    envOrigins.forEach(origin => {
+      if (origin && !origins.includes(origin)) {
+        origins.push(origin);
+      }
+    });
+  }
+  return origins;
+};
+
 // Security Middleware
 app.use(helmet({
   contentSecurityPolicy: false, // Allow React app to load
 }));
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL
-    ? process.env.FRONTEND_URL.split(',')
-    : allowedOrigins,
+  origin: getCorsOrigins(),
   credentials: true,
 }));
 
@@ -71,9 +82,7 @@ const socketIo = require('socket.io');
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.FRONTEND_URL
-      ? process.env.FRONTEND_URL.split(',')
-      : allowedOrigins,
+    origin: getCorsOrigins(),
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
