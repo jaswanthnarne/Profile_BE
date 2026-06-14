@@ -10,6 +10,13 @@ connectDB();
 
 const app = express();
 
+const allowedOrigins = [
+  'https://profile-ui-sable.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000',
+  'http://localhost:5174'
+];
+
 // Security Middleware
 app.use(helmet({
   contentSecurityPolicy: false, // Allow React app to load
@@ -18,9 +25,7 @@ app.use(helmet({
 app.use(cors({
   origin: process.env.FRONTEND_URL
     ? process.env.FRONTEND_URL.split(',')
-    : (process.env.NODE_ENV === 'production'
-        ? ['https://profile-ui-sable.vercel.app']
-        : ['http://localhost:5173', 'http://localhost:3000']),
+    : allowedOrigins,
   credentials: true,
 }));
 
@@ -67,9 +72,7 @@ const io = socketIo(server, {
   cors: {
     origin: process.env.FRONTEND_URL
       ? process.env.FRONTEND_URL.split(',')
-      : (process.env.NODE_ENV === 'production'
-          ? ['https://profile-ui-sable.vercel.app']
-          : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174']),
+      : allowedOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
