@@ -19,7 +19,7 @@ app.use(cors({
   origin: process.env.FRONTEND_URL
     ? process.env.FRONTEND_URL.split(',')
     : (process.env.NODE_ENV === 'production'
-        ? false  // Same origin in production (served statically)
+        ? ['https://profile-ui-sable.vercel.app']
         : ['http://localhost:5173', 'http://localhost:3000']),
   credentials: true,
 }));
@@ -68,7 +68,7 @@ const io = socketIo(server, {
     origin: process.env.FRONTEND_URL
       ? process.env.FRONTEND_URL.split(',')
       : (process.env.NODE_ENV === 'production'
-          ? false
+          ? ['https://profile-ui-sable.vercel.app']
           : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174']),
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
